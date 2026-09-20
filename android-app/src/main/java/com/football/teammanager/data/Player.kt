@@ -12,7 +12,8 @@ data class Player(
     val gamesPlayed: Int,
     val gamesSubstituted: Int,
     val goalsScored: Int,
-    val assists: Int
+    val assists: Int,
+    val teamId: String? = null
 )
 
 val positions = listOf("Goalkeeper", "Defender", "Midfielder", "Forward")

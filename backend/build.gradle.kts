@@ -11,9 +11,6 @@ application {
     mainClass.set("com.football.teammanager.ApplicationKt")
 }
 
-repositories {
-    mavenCentral()
-}
 
 dependencies {
     val ktorVersion = "3.0.3"

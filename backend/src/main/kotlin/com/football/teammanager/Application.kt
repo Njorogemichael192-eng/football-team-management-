@@ -2,13 +2,14 @@ package com.football.teammanager
 
 import com.football.teammanager.database.MongoDatabase
 import com.football.teammanager.routes.playerRoutes
-import io.ktor.http.ContentType
+import com.football.teammanager.routes.teamRoutes
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.server.plugins.cors.routing.CORS
+import io.ktor.server.routing.routing
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 
@@ -32,5 +33,8 @@ fun Application.module() {
         allowMethod(io.ktor.http.HttpMethod.Put)
         allowMethod(io.ktor.http.HttpMethod.Delete)
     }
-    playerRoutes(database)
+    routing {
+        playerRoutes(database)
+        teamRoutes(database)
+    }
 }

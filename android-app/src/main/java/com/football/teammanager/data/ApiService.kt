@@ -22,4 +22,19 @@ interface ApiService {
 
     @DELETE("players/{id}")
     suspend fun deletePlayer(@Path("id") id: String)
+
+    @GET("teams")
+    suspend fun getTeams(): List<Team>
+
+    @GET("teams/{id}")
+    suspend fun getTeam(@Path("id") id: String): Team
+
+    @POST("teams")
+    suspend fun createTeam(@Body team: Team): Team
+
+    @PUT("teams/{id}")
+    suspend fun updateTeam(@Path("id") id: String, @Body team: Team): Team
+
+    @DELETE("teams/{id}")
+    suspend fun deleteTeam(@Path("id") id: String)
 }

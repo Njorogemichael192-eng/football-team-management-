@@ -1,0 +1,40 @@
+android-app/src/main/java/com/football/teammanager/ui/AddPlayerScreen.kt:9:fun AddPlayerScreen(viewModel: PlayerViewModel, modifier: Modifier = Modifier, onBack: () -> Unit, onSaved: () -> Unit) {
+android-app/src/main/java/com/football/teammanager/ui/EditPlayerScreen.kt:9:fun EditPlayerScreen(player: Player, viewModel: PlayerViewModel, modifier: Modifier = Modifier, onBack: () -> Unit, onSaved: (Player) -> Unit) {
+android-app/src/main/java/com/football/teammanager/ui/PlayerListScreen.kt:40:fun PlayerListScreen(viewModel: PlayerViewModel, modifier: Modifier = Modifier, onAddPlayer: () -> Unit, onPlayerSelected: (Player) -> Unit) {
+android-app/src/main/java/com/football/teammanager/ui/PlayerListScreen.kt:64:                    val players = (state as PlayerUiState.Ready).players.filter { it.name.contains(searchQuery, ignoreCase = true) }
+android-app/src/main/java/com/football/teammanager/ui/PlayerListScreen.kt:65:                    if (players.isEmpty()) {
+android-app/src/main/java/com/football/teammanager/ui/PlayerListScreen.kt:66:                        Text(if (searchQuery.isBlank()) "No players added yet." else "No matching players.", Modifier.padding(top = 16.dp))
+android-app/src/main/java/com/football/teammanager/ui/PlayerListScreen.kt:69:                            items(players, key = { it.id }) { player -> PlayerCard(player, onPlayerSelected) }
+android-app/src/main/java/com/football/teammanager/ui/PlayerListScreen.kt:79:private fun PlayerCard(player: Player, onPlayerSelected: (Player) -> Unit) {
+android-app/src/main/java/com/football/teammanager/ui/PlayerListScreen.kt:80:    Card(Modifier.fillMaxWidth().clickable { onPlayerSelected(player) }) {
+android-app/src/main/java/com/football/teammanager/ui/FootballTeamManagerApp.kt:45:                onPlayerSelected = { screen = Screen.Details(it) }
+android-app/src/main/java/com/football/teammanager/ui/FootballTeamManagerApp.kt:47:            Screen.Add -> AddPlayerScreen(
+android-app/src/main/java/com/football/teammanager/ui/FootballTeamManagerApp.kt:63:            is Screen.Edit -> EditPlayerScreen(
+android-app/src/main/java/com/football/teammanager/viewmodel/PlayerViewModel.kt:14:import okhttp3.MediaType
+android-app/src/main/java/com/football/teammanager/viewmodel/PlayerViewModel.kt:15:import retrofit2.Retrofit
+android-app/src/main/java/com/football/teammanager/viewmodel/PlayerViewModel.kt:16:import retrofit2.converter.kotlinx.serialization.asConverterFactory
+android-app/src/main/java/com/football/teammanager/viewmodel/PlayerViewModel.kt:20:    data class Ready(val players: List<Player>) : PlayerUiState
+android-app/src/main/java/com/football/teammanager/viewmodel/PlayerViewModel.kt:33:        loadPlayers()
+android-app/src/main/java/com/football/teammanager/viewmodel/PlayerViewModel.kt:36:    fun loadPlayers() {
+android-app/src/main/java/com/football/teammanager/viewmodel/PlayerViewModel.kt:39:            runCatching { repository.getPlayers() }
+android-app/src/main/java/com/football/teammanager/viewmodel/PlayerViewModel.kt:41:                .onFailure { _uiState.value = PlayerUiState.Error("Unable to load players.") }
+android-app/src/main/java/com/football/teammanager/viewmodel/PlayerViewModel.kt:51:            loadPlayers()
+android-app/src/main/java/com/football/teammanager/viewmodel/PlayerViewModel.kt:60:                    loadPlayers()
+android-app/src/main/java/com/football/teammanager/viewmodel/PlayerViewModel.kt:72:        return Retrofit.Builder()
+android-app/src/main/java/com/football/teammanager/viewmodel/PlayerViewModel.kt:73:            .baseUrl(BuildConfig.API_BASE_URL)
+android-app/src/main/java/com/football/teammanager/data/PlayerRepository.kt:4:    suspend fun getPlayers() = apiService.getPlayers()
+android-app/src/main/java/com/football/teammanager/data/ApiService.kt:3:import retrofit2.http.Body
+android-app/src/main/java/com/football/teammanager/data/ApiService.kt:4:import retrofit2.http.DELETE
+android-app/src/main/java/com/football/teammanager/data/ApiService.kt:5:import retrofit2.http.GET
+android-app/src/main/java/com/football/teammanager/data/ApiService.kt:6:import retrofit2.http.POST
+android-app/src/main/java/com/football/teammanager/data/ApiService.kt:7:import retrofit2.http.PUT
+android-app/src/main/java/com/football/teammanager/data/ApiService.kt:8:import retrofit2.http.Path
+android-app/src/main/java/com/football/teammanager/data/ApiService.kt:11:    @GET("players")
+android-app/src/main/java/com/football/teammanager/data/ApiService.kt:12:    suspend fun getPlayers(): List<Player>
+android-app/src/main/java/com/football/teammanager/data/ApiService.kt:14:    @GET("players/{id}")
+android-app/src/main/java/com/football/teammanager/data/ApiService.kt:17:    @POST("players")
+android-app/src/main/java/com/football/teammanager/data/ApiService.kt:20:    @PUT("players/{id}")
+android-app/src/main/java/com/football/teammanager/data/ApiService.kt:23:    @DELETE("players/{id}")
+android-app/build.gradle.kts:19:    "API_BASE_URL",
+android-app/build.gradle.kts:63:    implementation("com.squareup.retrofit2:retrofit:2.11.0")
+android-app/build.gradle.kts:64:    implementation("com.squareup.retrofit2:converter-kotlinx-serialization:2.11.0")

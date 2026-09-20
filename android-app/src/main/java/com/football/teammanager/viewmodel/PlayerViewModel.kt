@@ -14,7 +14,6 @@ import kotlinx.serialization.json.Json
 import okhttp3.MediaType
 import retrofit2.Retrofit
 import retrofit2.converter.kotlinx.serialization.asConverterFactory
-import okhttp3.MediaType.Companion.toMediaType
 
 sealed interface PlayerUiState {
     data object Loading : PlayerUiState
@@ -34,15 +33,18 @@ class PlayerViewModel : ViewModel() {
         loadPlayers()
     }
 
-    fun loadPlayers() {
-        viewModelScope.launch {
-            _uiState.value = PlayerUiState.Loading
-            runCatching { repository.getPlayers() }
-                .onSuccess { _uiState.value = PlayerUiState.Ready(it) }
-                .onFailure { _uiState.value = PlayerUiState.Error("Unable to load players.") }
-        }
+fun loadPlayers() {
+    viewModelScope.launch {
+        _uiState.value = PlayerUiState.Loading
+        runCatching { repository.getPlayers() }
+            .onSuccess { _uiState.value = PlayerUiState.Ready(it) }
+            .onFailure { error ->
+                _uiState.value = PlayerUiState.Error(
+                    "${error::class.simpleName}: ${error.message}"
+                )
+            }
     }
-
+}
     suspend fun getPlayer(id: String): Result<Player> = runCatching { repository.getPlayer(id) }
 
     suspend fun savePlayer(player: Player): Result<Unit> {
@@ -50,7 +52,9 @@ class PlayerViewModel : ViewModel() {
             if (player.id.isBlank()) repository.createPlayer(player) else repository.updatePlayer(player.id, player)
             _message.value = if (player.id.isBlank()) "Player saved successfully." else "Changes saved successfully."
             loadPlayers()
-        }.onFailure { _message.value = "Unable to save player." }
+        }.onFailure { error ->
+    _message.value = "${error::class.simpleName}: ${error.message}"
+}
     }
 
     fun deletePlayer(id: String) {
@@ -72,7 +76,7 @@ class PlayerViewModel : ViewModel() {
         val json = Json { ignoreUnknownKeys = true }
         return Retrofit.Builder()
             .baseUrl(BuildConfig.API_BASE_URL)
-            .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
+            .addConverterFactory(json.asConverterFactory(MediaType.parse("application/json")!!))
             .build()
             .create(ApiService::class.java)
     }

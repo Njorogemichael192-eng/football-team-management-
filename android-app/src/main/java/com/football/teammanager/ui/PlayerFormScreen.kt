@@ -6,20 +6,21 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Icon
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -27,9 +28,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.ui.unit.dp
 import com.football.teammanager.data.Player
+import com.football.teammanager.data.Team
 import com.football.teammanager.data.positions
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -38,6 +39,7 @@ fun PlayerFormScreen(
     title: String,
     initialPlayer: Player,
     saveLabel: String,
+    teams: List<Team> = emptyList(),
     modifier: Modifier = Modifier,
     onBack: () -> Unit,
     onSave: (Player) -> Unit
@@ -50,8 +52,11 @@ fun PlayerFormScreen(
     var gamesSubstituted by remember { mutableStateOf(initialPlayer.gamesSubstituted.toString()) }
     var goalsScored by remember { mutableStateOf(initialPlayer.goalsScored.toString()) }
     var assists by remember { mutableStateOf(initialPlayer.assists.toString()) }
+    var selectedTeamId by remember { mutableStateOf(initialPlayer.teamId ?: "") }
     var error by remember { mutableStateOf<String?>(null) }
     var positionExpanded by remember { mutableStateOf(false) }
+    var teamExpanded by remember { mutableStateOf(false) }
+    val teamOptions = listOf("Unassigned") + teams.map { it.name }
 
     fun number(value: String) = value.toIntOrNull()
 
@@ -89,6 +94,24 @@ fun PlayerFormScreen(
             NumberField("Games substituted", gamesSubstituted) { gamesSubstituted = it }
             NumberField("Goals scored", goalsScored) { goalsScored = it }
             NumberField("Assists", assists) { assists = it }
+            ExposedDropdownMenuBox(expanded = teamExpanded, onExpandedChange = { teamExpanded = !teamExpanded }) {
+                OutlinedTextField(
+                    value = if (selectedTeamId.isBlank()) "Unassigned" else teams.firstOrNull { it.id == selectedTeamId }?.name ?: "Unassigned",
+                    onValueChange = {},
+                    readOnly = true,
+                    modifier = Modifier.fillMaxWidth().menuAnchor(),
+                    label = { Text("Team") },
+                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(teamExpanded) }
+                )
+                ExposedDropdownMenu(expanded = teamExpanded, onDismissRequest = { teamExpanded = false }) {
+                    listOf("Unassigned") + teams.map { it.name }.forEach { option ->
+                        DropdownMenuItem(text = { Text(option) }, onClick = {
+                            selectedTeamId = if (option == "Unassigned") "" else teams.first { it.name == option }.id
+                            teamExpanded = false
+                        })
+                    }
+                }
+            }
             if (error != null) Text(error!!, color = androidx.compose.material3.MaterialTheme.colorScheme.error)
             Button(onClick = {
                 val parsedAge = number(age)
@@ -104,7 +127,17 @@ fun PlayerFormScreen(
                     listOf(parsedGames, parsedSubstituted, parsedGoals, parsedAssists).any { it == null || it < 0 } -> "Statistics must be zero or greater."
                     else -> null
                 }
-                if (error == null) onSave(initialPlayer.copy(name = name.trim(), age = parsedAge!!, position = position, jerseyNumber = parsedJersey!!, gamesPlayed = parsedGames!!, gamesSubstituted = parsedSubstituted!!, goalsScored = parsedGoals!!, assists = parsedAssists!!))
+                if (error == null) onSave(initialPlayer.copy(
+                    name = name.trim(),
+                    age = parsedAge!!,
+                    position = position,
+                    jerseyNumber = parsedJersey!!,
+                    gamesPlayed = parsedGames!!,
+                    gamesSubstituted = parsedSubstituted!!,
+                    goalsScored = parsedGoals!!,
+                    assists = parsedAssists!!,
+                    teamId = selectedTeamId.ifBlank { null }
+                ))
             }, Modifier.fillMaxWidth()) { Text(saveLabel) }
         }
     }

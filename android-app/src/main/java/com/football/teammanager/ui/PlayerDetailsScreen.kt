@@ -21,10 +21,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.football.teammanager.data.Player
+import com.football.teammanager.data.Team
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PlayerDetailsScreen(player: Player, modifier: Modifier = Modifier, onBack: () -> Unit, onEdit: () -> Unit, onDelete: () -> Unit) {
+fun PlayerDetailsScreen(
+    player: Player,
+    teams: List<Team> = emptyList(),
+    modifier: Modifier = Modifier,
+    onBack: () -> Unit,
+    onEdit: () -> Unit,
+    onDelete: () -> Unit
+) {
+    val teamName = teams.firstOrNull { it.id == player.teamId }?.name ?: if (player.teamId.isNullOrBlank()) "Unassigned" else "Unknown"
+
     Scaffold(
         modifier = modifier,
         topBar = {
@@ -36,6 +46,7 @@ fun PlayerDetailsScreen(player: Player, modifier: Modifier = Modifier, onBack: (
     ) { paddingValues ->
         Column(Modifier.fillMaxSize().padding(paddingValues).padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Text(player.name, style = androidx.compose.material3.MaterialTheme.typography.headlineSmall)
+            Detail("Team", teamName)
             Detail("Age", player.age.toString())
             Detail("Position", player.position)
             Detail("Jersey number", player.jerseyNumber.toString())
