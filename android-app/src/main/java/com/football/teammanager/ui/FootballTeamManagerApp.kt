@@ -131,9 +131,9 @@ fun FootballTeamManagerApp(playerViewModel: PlayerViewModel, teamViewModel: Team
                         onBack = { selectedTeam = null },
                         onEdit = { editingTeam = selectedTeam; selectedTeam = null },
                         onDelete = {
+                            teamViewModel.deleteTeam(selectedTeam!!.id)
                             selectedTeam = null
                             currentTab = Tab.TEAMS
-                            teamViewModel.loadTeams()
                         },
                         onAddPlayer = { currentTab = Tab.PLAYERS }
                     )
