@@ -15,10 +15,10 @@ android {
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
-        buildConfigField(
+ buildConfigField(
     "String",
     "API_BASE_URL",
-    "\"https://verbose-xylophone-g4wjv5p59vg43wwrx-8080.app.github.dev/\""
+    "\"https://football-team-management-zimp.onrender.com/\""
 )
     }
 
