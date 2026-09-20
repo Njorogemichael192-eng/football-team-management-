@@ -1,0 +1,9 @@
+android-app/
+.gradle/
+**/.gradle/
+**/build/
+backend/.kotlin/
+.git/
+.gitignore
+README.md
+PROJECT_STATE.md
